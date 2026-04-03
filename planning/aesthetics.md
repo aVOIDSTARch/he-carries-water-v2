@@ -9,6 +9,7 @@
 
 ## Inspiration
 
+- www.bun.sh - i love the color vibe and shade gradation
 
 
 
@@ -19,3 +20,4 @@
 ## Wild Ideas
 
 - horizontal scroll
+- inaudible low frequency tone on cosmogony page
