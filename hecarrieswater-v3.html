@@ -1,23 +1,440 @@
----
-import '../styles/index-home.css';
-
-
-
----
-/** This page needs to be split into constituent parts */
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="generator" content={Astro.generator} />
 <title>hecarrieswater</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-</head>
 
+<style>
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    --magenta:   #FF0080;
+    --acid:      #CCFF00;
+    --void:      #080808;
+    --electric:  #00FFFF;
+    --plasma:    #FF6600;
+    --bone:      #F0EDE0;
+    --border-fat: 10px solid var(--void);
+  }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: var(--void);
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* Grain overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1000;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.04;
+    mix-blend-mode: overlay;
+  }
+
+  /*
+  ═══════════════════════════════════════════════════════
+  HOMEPAGE PLACEHOLDER
+  This div sits behind the mondrian grid.
+  Replace its contents with the real homepage when ready.
+  ═══════════════════════════════════════════════════════
+  */
+  .homepage {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background: #2a2a2a;
+  }
+
+  /* ── GRID ── */
+  .mondrian {
+    position: relative;
+    z-index: 10;
+    width: 100vw;
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 18px 1fr 18px 2.2fr 18px 1.1fr 18px 1.6fr 18px;
+    grid-template-rows:    18px 1.4fr 18px 1fr 18px 0.7fr 18px 1.2fr 18px;
+    background: var(--void);
+    gap: 0;
+    animation: gridIn 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes gridIn {
+    from { opacity: 0; transform: scale(1.03); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  .cell {
+    position: relative;
+    overflow: hidden;
+    will-change: transform, opacity;
+    /* show cell number in dev mode */
+  }
+
+  /* Dev label — hidden, kept in DOM for reference */
+  .cell-id { display: none; }
+
+  .line {
+    background: var(--void);
+    will-change: auto;
+  }
+
+  /* ── CELL EXIT ANIMATIONS ── */
+
+  /* Shake keyframes — applied via JS with inline animation */
+  @keyframes shake {
+    0%   { transform: translate(0,0) rotate(0deg); }
+    15%  { transform: translate(-6px, 3px) rotate(-2deg); }
+    30%  { transform: translate(5px, -4px) rotate(1.5deg); }
+    45%  { transform: translate(-4px, 5px) rotate(-1deg); }
+    60%  { transform: translate(6px, -2px) rotate(2.5deg); }
+    75%  { transform: translate(-3px, 4px) rotate(-1.8deg); }
+    90%  { transform: translate(4px, -3px) rotate(1deg); }
+    100% { transform: translate(0,0) rotate(0deg); }
+  }
+
+  @keyframes spinOut {
+    from { transform: rotate(0deg) scale(1); opacity: 1; }
+    to   { transform: rotate(var(--spin-dir, 360deg)) scale(0.05); opacity: 0; }
+  }
+
+  @keyframes shrinkOut {
+    0%   { transform: scale(1); opacity: 1; }
+    60%  { transform: scale(1.08); opacity: 1; }
+    100% { transform: scale(0); opacity: 0; }
+  }
+
+  @keyframes expandOut {
+    0%   { transform: scale(1); opacity: 1; }
+    40%  { transform: scale(1.18); opacity: 0.8; }
+    100% { transform: scale(2.2); opacity: 0; }
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(0); opacity: 1; }
+    to   { transform: translateY(-110%); opacity: 0; }
+  }
+
+  @keyframes slideDown {
+    from { transform: translateY(0); opacity: 1; }
+    to   { transform: translateY(110%); opacity: 0; }
+  }
+
+  @keyframes slideLeft {
+    from { transform: translateX(0); opacity: 1; }
+    to   { transform: translateX(-110%); opacity: 0; }
+  }
+
+  @keyframes slideRight {
+    from { transform: translateX(0); opacity: 1; }
+    to   { transform: translateX(110%); opacity: 0; }
+  }
+
+  @keyframes flipOut {
+    from { transform: perspective(400px) rotateY(0deg); opacity: 1; }
+    to   { transform: perspective(400px) rotateY(90deg) scale(0); opacity: 0; }
+  }
+
+  @keyframes dissolve {
+    0%   { opacity: 1; filter: blur(0px); }
+    100% { opacity: 0; filter: blur(12px); transform: scale(1.1); }
+  }
+
+  /* Cell gone state */
+  .cell-gone {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  /* ── COLORED BLOCKS ── */
+
+  .c-tl {
+    grid-column: 2 / 4;
+    grid-row: 2 / 4;
+    background: var(--bone);
+    border: var(--border-fat) solid var(--void);
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    padding: 20px 22px;
+  }
+  .c-tl::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(-45deg, transparent, transparent 28px, rgba(8,8,8,0.04) 28px, rgba(8,8,8,0.04) 29px);
+  }
+
+  .c-ml {
+    grid-column: 2 / 4;
+    grid-row: 4 / 6;
+    background: var(--magenta);
+    border: var(--border-fat) solid var(--void);
+  }
+  .c-ml::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(0,0,0,0.07) 40px, rgba(0,0,0,0.07) 41px);
+  }
+
+  .c-tr {
+    grid-column: 8 / 10;
+    grid-row: 2 / 5;
+    background: var(--acid);
+    border: var(--border-fat) solid var(--void);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .c-tr .vert-text {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(11px, 1.1vw, 16px);
+    letter-spacing: 0.25em;
+    color: var(--void);
+    opacity: 0.55;
+  }
+
+  .c-center {
+    grid-column: 4 / 6;
+    grid-row: 2 / 5;
+    background: var(--electric);
+    border: var(--border-fat) solid var(--void);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: clamp(18px, 3vw, 40px);
+    position: relative;
+    overflow: hidden;
+  }
+  .c-center::before {
+    content: '';
+    position: absolute;
+    top: -60%; right: -40%;
+    width: 130%; height: 130%;
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0.12) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  .site-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(38px, 6.5vw, 96px);
+    line-height: 0.88;
+    letter-spacing: -0.01em;
+    color: var(--void);
+    position: relative;
+    z-index: 2;
+    animation: nameIn 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+  }
+  @keyframes nameIn {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .site-sub {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(8px, 0.85vw, 12px);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--void);
+    opacity: 0.6;
+    margin-top: 14px;
+    position: relative;
+    z-index: 2;
+    animation: nameIn 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+  }
+
+  .coming-tag {
+    display: inline-block;
+    margin-top: 28px;
+    background: var(--void);
+    color: var(--electric);
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(7px, 0.75vw, 10px);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    position: relative;
+    z-index: 2;
+    animation: nameIn 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.8s both;
+  }
+
+  .c-mr {
+    grid-column: 6 / 8;
+    grid-row: 2 / 4;
+    background: var(--plasma);
+    border: var(--border-fat) solid var(--void);
+    position: relative;
+  }
+  .c-mr::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 22px, rgba(0,0,0,0.06) 22px, rgba(0,0,0,0.06) 23px);
+  }
+
+  .c-bl {
+    grid-column: 2 / 4;
+    grid-row: 6 / 10;
+    background: var(--void);
+    border: var(--border-fat) solid var(--void);
+    display: flex;
+    align-items: flex-end;
+    padding: 18px 20px;
+  }
+  .c-bl .bl-text {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(7px, 0.65vw, 9px);
+    letter-spacing: 0.2em;
+    color: rgba(240,237,224,0.18);
+    text-transform: uppercase;
+    line-height: 1.9;
+  }
+
+  .c-cb {
+    grid-column: 4 / 6;
+    grid-row: 5 / 8;
+    background: var(--bone);
+    border: var(--border-fat) solid var(--void);
+    position: relative;
+  }
+  .c-cb::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(45deg, transparent, transparent 18px, rgba(8,8,8,0.05) 18px, rgba(8,8,8,0.05) 19px);
+  }
+
+  .c-cbr {
+    grid-column: 6 / 8;
+    grid-row: 4 / 7;
+    background: var(--magenta);
+    border: var(--border-fat) solid var(--void);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .c-cbr::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(73deg, transparent, transparent 12px, rgba(0,0,0,0.09) 12px, rgba(0,0,0,0.09) 13px);
+  }
+
+  .c-ba {
+    grid-column: 4 / 6;
+    grid-row: 8 / 10;
+    background: var(--acid);
+    border: var(--border-fat) solid var(--void);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 20px;
+  }
+  .c-ba .pulse-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--void);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50%       { transform: scale(1.7); opacity: 0.4; }
+  }
+
+  .c-br {
+    grid-column: 6 / 10;
+    grid-row: 7 / 10;
+    background: var(--electric);
+    border: var(--border-fat) solid var(--void);
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: 16px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .c-br::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(-20deg, transparent, transparent 32px, rgba(0,0,0,0.04) 32px, rgba(0,0,0,0.04) 33px);
+  }
+  .c-br .br-mark {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(52px, 8vw, 120px);
+    line-height: 1;
+    color: rgba(8,8,8,0.08);
+    position: absolute;
+    bottom: -10px; left: 12px;
+    letter-spacing: -0.03em;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .c-trp {
+    grid-column: 8 / 10;
+    grid-row: 5 / 7;
+    background: var(--plasma);
+    border: var(--border-fat) solid var(--void);
+  }
+
+  .c-magenta-flicker {
+    animation: flicker 3.8s ease-in-out 1.2s infinite;
+  }
+  @keyframes flicker {
+    0%, 94%, 96%, 100% { opacity: 1; }
+    95%                 { opacity: 0.82; }
+  }
+
+  .c-center::after {
+    content: '';
+    position: absolute;
+    top: -100%; left: 0;
+    width: 100%; height: 2px;
+    background: rgba(0,0,0,0.15);
+    animation: scan 6s linear 2s infinite;
+    pointer-events: none;
+    z-index: 3;
+  }
+  @keyframes scan {
+    from { top: -2px; }
+    to   { top: 100%; }
+  }
+
+  /* ── MOUSE JIGGLE ── */
+  .cell[data-jiggle] {
+    transition: transform 0.05s linear;
+  }
+
+  /* Cell 4 is the trigger — show pointer on hover when reveal is ready */
+  [data-cell-id="4"] {
+    cursor: pointer;
+  }
+
+</style>
+</head>
 <body>
 
 <!-- Homepage sits behind everything, revealed as cells disappear -->
@@ -181,7 +598,7 @@ const REVEAL_CONFIG = {
   showLabels:    true,
   // per-cell exit animation duration range [min, max] ms
   exitDuration:  [600, 1200],
-} as const;
+};
 
 // ════════════════════════════════════════════════════════════════
 //  MOUSE JIGGLE TUNING
@@ -224,7 +641,7 @@ const EXIT_TYPES = [
   () => ({ name: 'dissolve', extra: '', dur: rand(...REVEAL_CONFIG.exitDuration) }),
 ];
 
-function rand(min: number, max: number): number {
+function rand(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
@@ -232,7 +649,7 @@ function pickExit() {
   return EXIT_TYPES[rand(0, EXIT_TYPES.length - 1)]();
 }
 
-function shuffle(arr: number[]): number[]	 {
+function shuffle(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -246,11 +663,8 @@ function shuffle(arr: number[]): number[]	 {
 // ════════════════════════════════════════════════════════════════
 
 const mondrian = document.getElementById('mondrian');
-if (!mondrian) throw new Error('mondrian element not found');
-
-const cells    = [...document.querySelectorAll<HTMLElement>('[data-cell-id]')];
-const jiggleCells = [...document.querySelectorAll<HTMLElement>('[data-jiggle]')];
-
+const cells    = [...document.querySelectorAll('[data-cell-id]')];
+const jiggleCells = [...document.querySelectorAll('[data-jiggle]')];
 
 // Label visibility
 if (REVEAL_ENABLED || REVEAL_CONFIG.showLabels) {
@@ -274,7 +688,7 @@ let mx = -9999, my = -9999;
 window.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
 window.addEventListener('mouseleave', () => { mx = -9999; my = -9999; });
 
-function lerp(a: number, b: number, t: number): number { return a + (b - a) * t; }
+function lerp(a, b, t) { return a + (b - a) * t; }
 
 function jiggleTick() {
   jiggleCells.forEach((cell, i) => {
@@ -316,7 +730,7 @@ requestAnimationFrame(jiggleTick);
 
 // ── REVEAL SEQUENCE ───────────────────────────────────────────
 
-function exitCell(cell: HTMLElement): Promise<void> {
+function exitCell(cell) {
   return new Promise(resolve => {
     const doShake = Math.random() > 0.45; // ~55% chance of pre-shake
     const exit    = pickExit();
@@ -367,11 +781,10 @@ function runRevealSequence() {
   revealFired = true;
 
   // Remove pointer cursor once fired
-  const trigger = document.querySelector<HTMLElement>('[data-cell-id="4"]');
+  const trigger = document.querySelector('[data-cell-id="4"]');
   if (trigger) trigger.style.cursor = 'default';
 
-const order = shuffle(cells.map(c => parseInt(c.dataset.cellId!)));
-
+  const order = shuffle(cells.map(c => parseInt(c.dataset.cellId)));
 
   console.log(
     '%c[HCW] Reveal sequence: ' + order.join(' → '),
@@ -382,7 +795,7 @@ const order = shuffle(cells.map(c => parseInt(c.dataset.cellId!)));
     return promise.then(() => {
       return new Promise(resolve => {
         setTimeout(() => {
-          const cell = document.querySelector<HTMLElement>('[data-cell-id="' + id + '"]');
+          const cell = document.querySelector('[data-cell-id="' + id + '"]');
           if (cell) {
             exitCell(cell).then(resolve);
           } else {
@@ -395,11 +808,13 @@ const order = shuffle(cells.map(c => parseInt(c.dataset.cellId!)));
 }
 
 if (REVEAL_ENABLED) {
-  const cell4 = document.querySelector<HTMLElement>('[data-cell-id="4"]');
+  const cell4 = document.querySelector('[data-cell-id="4"]');
   if (cell4) {
     cell4.addEventListener('click', runRevealSequence);
   }
 }
+
 </script>
+
 </body>
 </html>
