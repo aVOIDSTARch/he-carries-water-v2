@@ -19,7 +19,7 @@ export default function Homepage(props: HomepageProps) {
           {/* Background component */}
           <Sky />
         </ParallaxLayer>
-
+{/**
         <ParallaxLayer zIndex={getZ(DEFAULT_Z_CONFIG, 'SOLAR', 0)} mode="fill" passThrough>
           <OrbitalObject id="sun" src="/images/sun.png" alt="Sun" imageSize={64} />
         </ParallaxLayer>
@@ -33,9 +33,9 @@ export default function Homepage(props: HomepageProps) {
         </ParallaxLayer>
 
         <ParallaxLayer zIndex={getZ(DEFAULT_Z_CONFIG, 'FOREGROUND', 0)} mode="content">
-          {/* UI / navigation */}
+          
           <div class="TODO">.</div>
-        </ParallaxLayer>
+        </ParallaxLayer> */}
       </ParallaxPage>
     </div>
   );

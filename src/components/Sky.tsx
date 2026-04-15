@@ -61,7 +61,6 @@ export interface SkyProps {
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
-
 export default function Sky({
   sunBodyId = 'sun',
   palette = EARTH_SKY_PALETTE,

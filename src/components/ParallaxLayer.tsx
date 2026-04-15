@@ -102,11 +102,12 @@ export default function ParallaxLayer({
   };
 
   const fillStyle = {
-    ...baseStyle,
-    // Use CSS custom properties broadcast by ParallaxPage.
-    // These update on resize so fill layers always match the current scene dimensions.
-    width: 'var(--scene-width)',
-    height: 'var(--scene-height)',
+    // Fills the parallax-scene container exactly. inset: 0 is equivalent to
+    // top/right/bottom/left: 0 and avoids relying on CSS custom properties.
+    position: 'absolute',
+    inset: 0,
+    zIndex,
+    pointerEvents: passThrough ? 'none' : 'auto',
   };
 
   const contentStyle = {

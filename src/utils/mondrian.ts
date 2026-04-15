@@ -243,7 +243,11 @@ function runRevealSequence() {
         }, i === 0 ? 0 : REVEAL_CONFIG.interval);
       });
     });
-  }, Promise.resolve());
+  }, Promise.resolve()).then(() => {
+    // All cells are gone — remove the container so its background and grid
+    // lines no longer sit at z-index 501 covering the homepage.
+    if (mondrian) mondrian.style.display = 'none';
+  });
 }
 
 if (REVEAL_ENABLED) {
