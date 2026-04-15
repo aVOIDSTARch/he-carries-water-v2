@@ -31,7 +31,7 @@
  */
 
 import { map, type MapStore } from 'nanostores';
-import { initTime, onTimeUpdate, destroyTime, type LocalTime } from '@utils/local-time';
+import { initTime, onTimeUpdate, destroyTime, getLocalTime, type LocalTime } from '@utils/local-time';
 import { getOrbitalObjectPropsSet, recalcOnResize, type OrbitalObjectPropsSet, type OrbitalDistanceTier } from '@utils/orbital-geometry';
 import type { RotationalPosition } from '@utils/celestial-body-position';
 
@@ -144,6 +144,13 @@ export function registerOrbitalBody(config: OrbitalBodyConfig): void {
 
   _registry.set(config.id, config);
   computeGeometryFor(config.id, config);
+
+  // If the scene is already running, compute the initial rotation immediately.
+  // Without this, $rotations won't include the new body until the next 60-second tick.
+  if (_initialized) {
+    const time = getLocalTime();
+    if (time) $rotations.setKey(config.id, config.getPosition(time));
+  }
 }
 
 /**

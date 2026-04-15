@@ -200,12 +200,12 @@ export default function ParallaxPage({
   // ── CSS custom properties ──
   // Cast as CSSProperties to allow CSS variable strings.
   const cssVars = {
-    '–scene-width': `${dimensions.sceneWidth}px`,
-    '–scene-height': `${dimensions.sceneHeight}px`,
-    '–scene-max-width': maxWidth === Infinity ? 'none' : `${maxWidth}px`,
-    '–view-width': `${dimensions.viewWidth}px`,
-    '–view-height': `${dimensions.viewHeight}px`,
-    '–letterbox-color': letterboxColor,
+    '--scene-width': `${dimensions.sceneWidth}px`,
+    '--scene-height': `${dimensions.sceneHeight}px`,
+    '--scene-max-width': maxWidth === Infinity ? 'none' : `${maxWidth}px`,
+    '--view-width': `${dimensions.viewWidth}px`,
+    '--view-height': `${dimensions.viewHeight}px`,
+    '--letterbox-color': letterboxColor,
   } as Record<string, string>;
 
   // ── Sorted layers ──

@@ -48,7 +48,7 @@
 import type { ComponentChildren } from 'preact';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-export type ParallaxLayerMode = 'fill' | 'content';
+export type ParallaxLayerMode = 'fill' | 'content' | 'free';
 
 export interface ParallaxLayerProps {
   /** Z-index for this layer — use getZ() from z-config.ts */
@@ -59,8 +59,9 @@ export interface ParallaxLayerProps {
 
   /**
   - Sizing mode.
-  - 'fill'    — fills scene width and height (default)
+  - 'fill'    — fills scene width and height via CSS vars (default)
   - 'content' — sizes to children, centered on scene X axis, top-aligned
+  - 'free'    — covers the full scene with inset: 0; children positioned freely
   */
   mode?: ParallaxLayerMode;
 
@@ -104,8 +105,8 @@ export default function ParallaxLayer({
     ...baseStyle,
     // Use CSS custom properties broadcast by ParallaxPage.
     // These update on resize so fill layers always match the current scene dimensions.
-    width: 'var(–scene-width)',
-    height: 'var(–scene-height)',
+    width: 'var(--scene-width)',
+    height: 'var(--scene-height)',
   };
 
   const contentStyle = {
@@ -116,9 +117,18 @@ export default function ParallaxLayer({
     height: 'auto',
   };
 
+  // Free canvas: covers the full scene without relying on CSS vars.
+  // Use this for interactive UI layers — position children however you like.
+  const freeStyle = {
+    position: 'absolute',
+    inset: 0,
+    zIndex,
+    pointerEvents: passThrough ? 'none' : 'auto',
+  };
+
   const layerStyle = {
-    ...(mode === 'fill' ? fillStyle : contentStyle),
-    // Consumer-provided styles applied last — can override anything above if needed.
+    ...(mode === 'fill' ? fillStyle : mode === 'free' ? freeStyle : contentStyle),
+    // Consumer-provided styles merged last — can override anything above if needed.
     ...style,
   };
 

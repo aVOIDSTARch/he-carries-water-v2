@@ -12,10 +12,9 @@ interface HomepageProps {
 
 export default function Homepage(props: HomepageProps) {
 
-
   return (
     <div class="homepage">
-      <ParallaxPage maxWidth={2560}>
+      <ParallaxPage maxWidth={2560} letterboxColor="rgb(10, 15, 45)">
         <ParallaxLayer zIndex={getZ(DEFAULT_Z_CONFIG, 'BACKGROUND', 0)} mode="fill" >
           {/* Background component */}
           <Sky />
