@@ -1,7 +1,7 @@
 ---
-import Mondrian from '../components/Mondrian.tsx';
-import Homepage from '../components/Homepage.tsx';
-import '../styles/index-home.css';
+import Mondrian from '@components/Mondrian';
+import Homepage from '@components/Homepage';
+import '@styles/index-home.css';
 const REVEAL_ENABLED: boolean = false;
 
 
@@ -25,7 +25,8 @@ const REVEAL_ENABLED: boolean = false;
       <!-- ═══════════════════════════════════════════════════
           REPLACE THIS WITH YOUR REAL HOMEPAGE CONTENT
           ═══════════════════════════════════════════════════ -->
-      <Homepage />
+      <Homepage client:load  />
+      <script type="module" src="/src/utils/register-orbitals.ts"></script>
     </div>
     <Mondrian live={REVEAL_ENABLED}/>
     <script type="module" src="/src/utils/mondrian.ts"></script>

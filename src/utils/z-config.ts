@@ -87,10 +87,8 @@ export function validateZConfig(config: ZConfig): boolean {
       console.warn(`[z-config] Tier "${tier}" must have at least 1 slot.`);
       valid = false;
     }
-
     cursor = range.base + range.slots;
   }
-
   return valid;
 }
 

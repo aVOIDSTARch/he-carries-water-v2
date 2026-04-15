@@ -24,13 +24,12 @@
 import type { LocalTime } from '@utils/local-time';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-
 export interface RotationalPosition {
   degrees: number;       // [0, 360) — CSS-ready, 0° = top
   radians: number;       // [0, 2π) — canvas/WebGL-ready, 0 = top
   cssRotation: string;   // "rotate(Xdeg)" — drop directly into el.style.transform
   cssTransform: string;  // "rotate(Xdeg)" alias — explicit for clarity at call site
-  progress: number;      // [0, 1) — normalised position within current cycle
+  progress: number;      // [0, 1) — normalized position within current cycle
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -42,7 +41,7 @@ const TWO_PI = Math.PI * 2;
 // ─── Core calculation ─────────────────────────────────────────────────────────
 
 /**
- * Convert a LocalTime into a normalised rotational position for a celestial body.
+ * Convert a LocalTime into a normalized rotational position for a celestial body.
  *
  * @param time            LocalTime object from local-time.ts
  * @param offset          Hours to shift the starting position. 0 = noon at top.
@@ -69,7 +68,7 @@ export function getBodyRotationalValue(
   // Convert to raw degrees of travel, scaled by rotation speed
   const rawDegrees = shiftedHours * DEG_PER_HOUR * rotationsPerDay;
 
-  // Normalise to [0, 360)
+  // Normalize to [0, 360)
   const degrees = ((rawDegrees % 360) + 360) % 360;
 
   // Derived values
@@ -97,7 +96,7 @@ export function toRadians(degrees: number): number {
 }
 
 /**
- * Convert radians to normalised degrees [0, 360).
+ * Convert radians to normalize degrees [0, 360).
  */
 export function toDegrees(radians: number): number {
   return ((radians / TWO_PI) * 360 + 360) % 360;

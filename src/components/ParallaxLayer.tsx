@@ -43,95 +43,90 @@
   <NavigationUI />
   ```
 - </ParallaxLayer>
-
 */
 
 import type { ComponentChildren } from 'preact';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-
 export type ParallaxLayerMode = 'fill' | 'content';
 
 export interface ParallaxLayerProps {
-/** Z-index for this layer — use getZ() from z-config.ts */
-zIndex: number;
+  /** Z-index for this layer — use getZ() from z-config.ts */
+  zIndex: number;
 
-/** Nested component or element to render within this layer */
-children: ComponentChildren;
+  /** Nested component or element to render within this layer */
+  children: ComponentChildren;
 
-/**
-
-- Sizing mode.
-- 'fill'    — fills scene width and height (default)
-- 'content' — sizes to children, centered on scene X axis, top-aligned
+  /**
+  - Sizing mode.
+  - 'fill'    — fills scene width and height (default)
+  - 'content' — sizes to children, centered on scene X axis, top-aligned
   */
   mode?: ParallaxLayerMode;
 
-/** Optional className applied to the layer div */
-className?: string;
+  /** Optional className applied to the layer div */
+  className?: string;
 
-/** Optional inline styles merged into the layer div — applied last, can override */
-style?: Record<string, string | number>;
+  /** Optional inline styles merged into the layer div — applied last, can override */
+  style?: Record<string, string | number>;
 
-/**
-
-- Whether pointer events pass through this layer to layers below.
-- Default: false
-- Set true for purely visual layers (backgrounds, atmosphere, orbitals)
-- so clicks reach interactive foreground layers.
+  /**
+  - Whether pointer events pass through this layer to layers below.
+  - Default: false
+  - Set true for purely visual layers (backgrounds, atmosphere, orbitals)
+  - so clicks reach interactive foreground layers.
   */
   passThrough?: boolean;
-  }
+}
 
 // ─── Component ────────────────────────────────────────────────────────────────
-
 export default function ParallaxLayer({
-zIndex,
-children,
-mode = 'fill',
-className = '',
-style = {},
-passThrough = false,
+  zIndex,
+  children,
+  mode = 'fill',
+  className = '',
+  style = {},
+  passThrough = false,
 }: ParallaxLayerProps) {
+  // Base: all layers share these properties regardless of mode.
+  // left: 50% + translateX(-50%) centers every layer on the scene midpoint.
+  // This is the core of the symmetric centering — nothing anchors to the left edge.
+  const baseStyle = {
+    position: 'absolute',
+    top: 0,
+    left: '50%',
+    transform: 'translateX(-50%)',
+    zIndex,
+    pointerEvents: passThrough ? 'none' : 'auto',
+  };
 
-// Base: all layers share these properties regardless of mode.
-// left: 50% + translateX(-50%) centers every layer on the scene midpoint.
-// This is the core of the symmetric centering — nothing anchors to the left edge.
-const baseStyle = {
-position: 'absolute',
-top: 0,
-left: '50%',
-transform: 'translateX(-50%)',
-zIndex,
-pointerEvents: passThrough ? 'none' : 'auto',
-};
+  const fillStyle = {
+    ...baseStyle,
+    // Use CSS custom properties broadcast by ParallaxPage.
+    // These update on resize so fill layers always match the current scene dimensions.
+    width: 'var(–scene-width)',
+    height: 'var(–scene-height)',
+  };
 
-const fillStyle = {
-...baseStyle,
-// Use CSS custom properties broadcast by ParallaxPage.
-// These update on resize so fill layers always match the current scene dimensions.
-width: 'var(–scene-width)',
-height: 'var(–scene-height)',
-};
+  const contentStyle = {
+    ...baseStyle,
+    // Size to children — no explicit width or height.
+    // The left 50% + translateX(-50%) in baseStyle centers the content block.
+    width: 'auto',
+    height: 'auto',
+  };
 
-const contentStyle = {
-...baseStyle,
-// Size to children — no explicit width or height.
-// The left 50% + translateX(-50%) in baseStyle centers the content block.
-width: 'auto',
-height: 'auto',
-};
+  const layerStyle = {
+    ...(mode === 'fill' ? fillStyle : contentStyle),
+    // Consumer-provided styles applied last — can override anything above if needed.
+    ...style,
+  };
 
-const layerStyle = {
-...(mode === 'fill' ? fillStyle : contentStyle),
-// Consumer-provided styles applied last — can override anything above if needed.
-...style,
-};
-
-return (
-<div
-  style={layerStyle}
-  className={`parallax-layer parallax-layer--${mode}${className ? ` ${className}` : ''}`}
-  data-z={zIndex}> {children} </div>
-);
+  return (
+    <div
+      style={layerStyle}
+      className={`parallax-layer parallax-layer--${mode}${className ? ` ${className}` : ''}`}
+      data-z={zIndex}> {children}
+    </div>
+  );
 }

@@ -2,19 +2,14 @@
 interface MondrianProps {
   live: boolean; // whether the site is live or coming soon
 }
-
 /**
  * Mondrian grid component — purely presentational.
  * The reveal sequence and timing will be handled by the parent Astro page.
  */
-
-
 export default function Mondrian(props: MondrianProps) {
-
 
   return (
     <div class="mondrian" id="mondrian">
-
       {/* Void border strips */}
       <div class="line" style="grid-column:1/10; grid-row:1/2;"></div>
       <div class="line" style="grid-column:1/10; grid-row:3/4;"></div>
@@ -26,7 +21,6 @@ export default function Mondrian(props: MondrianProps) {
       <div class="line" style="grid-column:5/6;  grid-row:1/10;"></div>
       <div class="line" style="grid-column:7/8;  grid-row:1/10;"></div>
       <div class="line" style="grid-column:9/10; grid-row:1/10;"></div>
-
       {/*
       ═══════════════════════════════════════════════════════════
       CELL INTEGER MAP
@@ -47,10 +41,17 @@ export default function Mondrian(props: MondrianProps) {
       11  c-trp        plasma      right accent
       ═══════════════════════════════════════════════════════════
       */}
-
       <div class="cell c-tl" data-cell-id="1" data-jiggle>
         <span class="cell-id">1</span>
-        <span style="font-family:'Space Mono',monospace; font-size:clamp(7px,0.6vw,9px); letter-spacing:0.25em; text-transform:uppercase; color:rgba(8,8,8,0.3); position:relative; z-index:2;">Water = Truth</span>
+        <span
+          style="font-family:'Space Mono',
+          monospace; font-size:clamp(7px,0.6vw,9px);
+          letter-spacing:0.25em;
+          text-transform:uppercase;
+          color:rgba(8,8,8,0.3);
+          position:relative; z-index:2;">
+          Water = Truth
+        </span>
       </div>
 
       <div class="cell c-ml c-magenta-flicker" data-cell-id="2" data-jiggle>
@@ -99,7 +100,6 @@ export default function Mondrian(props: MondrianProps) {
         <div class="cell c-trp" data-cell-id="11" data-jiggle>
           <span class="cell-id">11</span>
         </div>
-
       </div>
 
 )}
