@@ -8,6 +8,15 @@
     "dist"
   ],
   "compilerOptions": {
+    "paths": {
+      "baseUrl": ["."],
+      "@utils/*": [
+        "./src/utils/*"
+      ],
+      "@components/*": [
+        "./src/components/*"
+      ]
+    },
     "jsx": "react-jsx",
     "jsxImportSource": "preact"
   }

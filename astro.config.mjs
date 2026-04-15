@@ -11,6 +11,12 @@ export default defineConfig({
     server: {
       port: 4343,
     },
+    resolve: {
+      alias: {
+        '@utils': '/src/utils',
+        '@components': '/src/components',
+      },
+    },
  },
 
   server: {

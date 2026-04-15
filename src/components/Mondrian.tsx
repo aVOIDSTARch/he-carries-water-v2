@@ -1,6 +1,15 @@
 // JSX file to insert the Mondrian grid into the Astro page. This is where the cell content lives, and where the reveal sequence logic will be implemented.
+interface MondrianProps {
+  live: boolean; // whether the site is live or coming soon
+}
 
-export default function Mondrian(props) {
+/**
+ * Mondrian grid component — purely presentational.
+ * The reveal sequence and timing will be handled by the parent Astro page.
+ */
+
+
+export default function Mondrian(props: MondrianProps) {
 
 
   return (
