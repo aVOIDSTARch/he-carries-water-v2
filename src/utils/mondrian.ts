@@ -18,7 +18,7 @@
 //  │          only mouse jiggle active                   │
 //  └─────────────────────────────────────────────────────┘
 
-const REVEAL_ENABLED = false;
+const REVEAL_ENABLED = true;
 
 // ════════════════════════════════════════════════════════════════
 //  REVEAL TUNING
