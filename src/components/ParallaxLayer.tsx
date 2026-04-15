@@ -2,14 +2,14 @@
 
 - ParallaxLayer.tsx
 - A single layer in the ParallaxPage stack.
-- 
+-
 - Centering model:
-- All layers — regardless of mode — are centered on the scene’s horizontal midpoint
+- All layers — regardless of mode — are centered on the scene's horizontal midpoint
 - using left: 50% + translateX(-50%). This means every layer shrinks and grows
 - symmetrically from the center, never anchoring to the left edge.
-- 
+-
 - Sizing modes:
-- ‘fill’    — layer width matches –scene-width, height matches –scene-height (default)
+- 'fill'    — layer width matches –scene-width, height matches –scene-height (default)
 - ```
             The layer still uses left 50% + translateX(-50%) so it is centered,
   ```
@@ -22,22 +22,22 @@
 - ```
             Use for: backgrounds, orbital planes, atmosphere, horizon.
   ```
-- 
-- ‘content’ — layer sizes to its children.
+-
+- 'content' — layer sizes to its children.
 - ```
             Centered on the scene X axis, top-aligned.
   ```
 - ```
             Use for: UI elements, foreground components, anything self-sized.
   ```
-- 
+-
 - Usage:
 - <ParallaxLayer zIndex={52} mode="fill" passThrough>
 - ```
   <AtmosphereHaze />
   ```
 - </ParallaxLayer>
-- 
+-
 - <ParallaxLayer zIndex={62} mode="content">
 - ```
   <NavigationUI />
@@ -46,24 +46,24 @@
 
 */
 
-import type { ReactNode, CSSProperties } from ‘react’;
+import type { ComponentChildren } from 'preact';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type ParallaxLayerMode = ‘fill’ | ‘content’;
+export type ParallaxLayerMode = 'fill' | 'content';
 
 export interface ParallaxLayerProps {
 /** Z-index for this layer — use getZ() from z-config.ts */
 zIndex: number;
 
 /** Nested component or element to render within this layer */
-children: ReactNode;
+children: ComponentChildren;
 
 /**
 
 - Sizing mode.
-- ‘fill’    — fills scene width and height (default)
-- ‘content’ — sizes to children, centered on scene X axis, top-aligned
+- 'fill'    — fills scene width and height (default)
+- 'content' — sizes to children, centered on scene X axis, top-aligned
   */
   mode?: ParallaxLayerMode;
 
@@ -71,7 +71,7 @@ children: ReactNode;
 className?: string;
 
 /** Optional inline styles merged into the layer div — applied last, can override */
-style?: CSSProperties;
+style?: Record<string, string | number>;
 
 /**
 
@@ -88,8 +88,8 @@ style?: CSSProperties;
 export default function ParallaxLayer({
 zIndex,
 children,
-mode = ‘fill’,
-className = ‘’,
+mode = 'fill',
+className = '',
 style = {},
 passThrough = false,
 }: ParallaxLayerProps) {
@@ -97,44 +97,41 @@ passThrough = false,
 // Base: all layers share these properties regardless of mode.
 // left: 50% + translateX(-50%) centers every layer on the scene midpoint.
 // This is the core of the symmetric centering — nothing anchors to the left edge.
-const baseStyle: CSSProperties = {
-position: ‘absolute’,
+const baseStyle = {
+position: 'absolute',
 top: 0,
-left: ‘50%’,
-transform: ‘translateX(-50%)’,
+left: '50%',
+transform: 'translateX(-50%)',
 zIndex,
-pointerEvents: passThrough ? ‘none’ : ‘auto’,
+pointerEvents: passThrough ? 'none' : 'auto',
 };
 
-const fillStyle: CSSProperties = {
-…baseStyle,
+const fillStyle = {
+...baseStyle,
 // Use CSS custom properties broadcast by ParallaxPage.
 // These update on resize so fill layers always match the current scene dimensions.
-width: ‘var(–scene-width)’,
-height: ‘var(–scene-height)’,
+width: 'var(–scene-width)',
+height: 'var(–scene-height)',
 };
 
-const contentStyle: CSSProperties = {
-…baseStyle,
+const contentStyle = {
+...baseStyle,
 // Size to children — no explicit width or height.
 // The left 50% + translateX(-50%) in baseStyle centers the content block.
-width: ‘auto’,
-height: ‘auto’,
+width: 'auto',
+height: 'auto',
 };
 
-const layerStyle: CSSProperties = {
-…(mode === ‘fill’ ? fillStyle : contentStyle),
+const layerStyle = {
+...(mode === 'fill' ? fillStyle : contentStyle),
 // Consumer-provided styles applied last — can override anything above if needed.
-…style,
+...style,
 };
 
 return (
 <div
-style={layerStyle}
-className={`parallax-layer parallax-layer--${mode}${className ? ` ${className}` : ''}`}
-data-z={zIndex}
->
-{children}
-</div>
+  style={layerStyle}
+  className={`parallax-layer parallax-layer--${mode}${className ? ` ${className}` : ''}`}
+  data-z={zIndex}> {children} </div>
 );
 }

@@ -27,7 +27,7 @@
 - Place inside a ParallaxLayer at the ATMOSPHERE tier with passThrough={true}.
   */
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'preact/hooks';
 import { useSceneDimensions } from './ParallaxPage';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -360,7 +360,7 @@ style={{ display: 'block' }}
 </filter>
 </defs>
 
-```
+
     {clouds.map(cloud => (
       <g
         key={cloud.id}
@@ -397,7 +397,7 @@ style={{ display: 'block' }}
     ))}
   </svg>
 </div>
-```
+
 
 );
 }

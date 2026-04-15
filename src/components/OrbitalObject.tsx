@@ -12,10 +12,10 @@
 - 
 - Prerequisites:
 - - initScene() must have been called in a parent <script> before this mounts
-- - registerOrbitalBody({ id: ‘sun’, … }) must have been called for this id
+- - registerOrbitalBody({ id: 'sun', … }) must have been called for this id
 - 
 - Usage:
-- import OrbitalObject from ‘@components/OrbitalObject’;
+- import OrbitalObject from '@components/OrbitalObject';
 - 
 - <OrbitalObject
 - ```
@@ -39,10 +39,10 @@
 - />
   */
 
-import { useStore } from ‘@nanostores/react’;
-import { $rotations, $geometry } from ‘@utils/orbital-store’;
-import { getTierZIndex } from ‘@utils/orbital-geometry’;
-import OrbitalDivElement from ‘./OrbitalDivElement’;
+import { useStore } from '@nanostores/preact';
+import { $rotations, $geometry } from '@utils/orbital-store';
+import { getTierZIndex } from '@utils/orbital-geometry';
+import OrbitalDivElement from './OrbitalDivElement';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -62,8 +62,8 @@ alt?: string;
 
 /**
 
-- Z-index slot within the tier’s range (0–9).
-- Added to the tier’s base z-index from TIER_Z_INDEX_BASE.
+- Z-index slot within the tier's range (0–9).
+- Added to the tier's base z-index from TIER_Z_INDEX_BASE.
 - Default: 0
   */
   zIndexSlot?: number;
@@ -87,11 +87,11 @@ className?: string;
 export default function OrbitalObject({
 id,
 src,
-alt = ‘’,
+alt = '',
 zIndexSlot = 0,
 imageSize = 48,
-imageClassName = ‘’,
-className = ‘’,
+imageClassName = '',
+className = '',
 }: OrbitalObjectProps) {
 const rotations = useStore($rotations);
 const geometry = useStore($geometry);
@@ -105,15 +105,15 @@ if (!rotation || !geo) return null;
 
 const zIndex = getTierZIndex(geo.tier, zIndexSlot);
 
-const imageStyle: React.CSSProperties = {
+const imageStyle = {
 width: `${imageSize}px`,
 height: `${imageSize}px`,
-display: ‘block’,
+display: 'block',
 // Counter-rotate the image so it stays visually upright as the div rotates.
 // Remove this if the image should rotate with the orbital plane (e.g. a directional comet).
-transform: rotation.cssRotation.replace(‘rotate(’, ‘rotate(-’).replace(’)’, ‘)’),
-pointerEvents: ‘none’,
-userSelect: ‘none’,
+transform: rotation.cssRotation.replace('rotate(', 'rotate(-').replace(')', ')'),
+pointerEvents: 'none',
+userSelect: 'none',
 };
 
 return (

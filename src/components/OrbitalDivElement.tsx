@@ -30,8 +30,8 @@
 
 */
 
-import type { ReactNode } from ‘react’;
-import type { OrbitalObjectPropsSet } from ‘@utils/orbital-geometry’;
+import type { ComponentChildren } from 'preact';
+import type { OrbitalObjectPropsSet } from '@utils/orbital-geometry';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -44,13 +44,13 @@ zIndex: number;
 
 /**
 
-- CSS rotate string — e.g. “rotate(145.0000deg)”
+- CSS rotate string — e.g. "rotate(145.0000deg)"
 - Pass directly from RotationalPosition.cssRotation
   */
   rotation: string;
 
 /** The celestial body image or element to anchor within the orbital div */
-children: ReactNode;
+children: ComponentChildren;
 
 /** Optional additional className for the orbital div */
 className?: string;
@@ -63,7 +63,7 @@ props,
 zIndex,
 rotation,
 children,
-className = ‘’,
+className = '',
 }: OrbitalDivElementProps) {
 const {
 diameter,
@@ -75,21 +75,21 @@ objectOffsetFromTop,
 /**
 
 - Transform origin is the center of the div — which corresponds to the planet center.
-- CSS default transform-origin is ‘50% 50%’ (center of the element), which is correct here.
+- CSS default transform-origin is '50% 50%' (center of the element), which is correct here.
 - We make it explicit for clarity and resilience against inherited styles.
   */
-  const orbitalDivStyle: React.CSSProperties = {
-  position: ‘absolute’,
+  const orbitalDivStyle = {
+  position: 'absolute',
   width: `${diameter}px`,
   height: `${diameter}px`,
   top: `${top}px`,
   left: `${left}px`,
   zIndex,
   transform: rotation,
-  transformOrigin: ‘50% 50%’,
+  transformOrigin: '50% 50%',
   // No overflow hidden — celestial objects may legitimately exit the viewport
-  pointerEvents: ‘none’,
-  willChange: ‘transform’,
+  pointerEvents: 'none',
+  willChange: 'transform',
   };
 
 /**
@@ -98,22 +98,22 @@ objectOffsetFromTop,
 - from the top of the orbital div. Centered horizontally within the div.
 - The celestial body image should be centered on this anchor point.
   */
-  const anchorStyle: React.CSSProperties = {
-  position: ‘absolute’,
+  const anchorStyle = {
+  position: 'absolute',
   top: `${objectOffsetFromTop}px`,
-  left: ‘50%’,
-  transform: ‘translateX(-50%)’,
-  display: ‘flex’,
-  alignItems: ‘center’,
-  justifyContent: ‘center’,
-  pointerEvents: ‘none’,
+  left: '50%',
+  transform: 'translateX(-50%)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  pointerEvents: 'none',
   };
 
 return (
 <div
 style={orbitalDivStyle}
 className={`orbital-div-element${className ? ` ${className}` : ''}`}
-aria-hidden=“true”
+aria-hidden="true"
 >
 <div style={anchorStyle} className="orbital-anchor">
 {children}

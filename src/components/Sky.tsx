@@ -3,7 +3,7 @@
 - Sky.tsx
 - Reactive atmospheric gradient layer for hecarrieswater.com
 - 
-- Renders a full-scene gradient that evolves continuously with the sun’s
+- Renders a full-scene gradient that evolves continuously with the sun's
 - rotational position. Uses computeSkyGradient() from gradient.ts.
 - 
 - The gradient updates every time the sun position ticks (onTimeUpdate).
@@ -18,15 +18,15 @@
 - Place inside a ParallaxLayer at the BACKGROUND or STELLAR tier.
   */
 
-import { useState, useEffect } from ‘react’;
-import { useStore } from ‘@nanostores/react’;
-import { $rotations } from ‘@utils/orbital-store’;
+import { useState, useEffect } from 'preact/hooks';
+import { useStore } from '@nanostores/preact';
+import { $rotations } from '@utils/orbital-store';
 import {
 computeSkyGradient,
 EARTH_SKY_PALETTE,
 type SkyPalette,
 type GradientResult,
-} from ‘@utils/gradient’;
+} from '@utils/gradient';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -35,7 +35,7 @@ export interface SkyProps {
 
 - The orbital store ID of the sun body.
 - Must match the id used in registerOrbitalBody().
-- Default: ‘sun’
+- Default: 'sun'
   */
   sunBodyId?: string;
 
@@ -68,10 +68,10 @@ className?: string;
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function Sky({
-sunBodyId = ‘sun’,
+sunBodyId = 'sun',
 palette = EARTH_SKY_PALETTE,
 transitionDuration = 120_000,
-className = ‘’,
+className = '',
 debug = false,
 }: SkyProps) {
 const rotations = useStore($rotations);
@@ -88,28 +88,28 @@ setGradient(result);
 // Hold render until sun rotation is available
 if (!gradient) return null;
 
-const skyStyle: React.CSSProperties = {
-position: ‘absolute’,
+const skyStyle = {
+position: 'absolute',
 inset: 0,
-width: ‘100%’,
-height: ‘100%’,
+width: '100%',
+height: '100%',
 background: gradient.css,
 // CSS transition smooths the gradient change between time ticks.
 // Duration should be >= the update interval to avoid visible jumps.
 transition: transitionDuration > 0
 ? `background ${transitionDuration}ms linear`
 : undefined,
-pointerEvents: ‘none’,
+pointerEvents: 'none',
 };
 
-const debugStyle: React.CSSProperties = {
-position: ‘absolute’,
+const debugStyle = {
+position: 'absolute',
 top: 8,
 left: 8,
 fontSize: 11,
-fontFamily: ‘monospace’,
-color: ‘rgba(255,255,255,0.6)’,
-pointerEvents: ‘none’,
+fontFamily: 'monospace',
+color: 'rgba(255,255,255,0.6)',
+pointerEvents: 'none',
 lineHeight: 1.6,
 };
 
@@ -117,7 +117,7 @@ return (
 <div
 style={skyStyle}
 className={`sky-layer${className ? ` ${className}` : ''}`}
-aria-hidden=“true”
+aria-hidden="true"
 >
 {debug && (
 <div style={debugStyle}>

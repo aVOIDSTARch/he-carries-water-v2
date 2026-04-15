@@ -44,15 +44,15 @@
 - />
 - 
 - Must be registered in orbital-store before mounting:
-- registerOrbitalBody({ id: ‘moon’, tier: OrbitalDistanceTier.ORBITING, … })
+- registerOrbitalBody({ id: 'moon', tier: OrbitalDistanceTier.ORBITING, … })
   */
 
-import { useMemo } from ‘react’;
-import { useStore } from ‘@nanostores/react’;
-import { $rotations, $geometry } from ‘@utils/orbital-store’;
-import { getTierZIndex } from ‘@utils/orbital-geometry’;
-import OrbitalDivElement from ‘./OrbitalDivElement’;
-import { getLunarPhase, type LunarPhase } from ‘@utils/lunar-phase’;
+import { useMemo } from 'preact/hooks';
+import { useStore } from '@nanostores/preact';
+import { $rotations, $geometry } from '@utils/orbital-store';
+import { getTierZIndex } from '@utils/orbital-geometry';
+import OrbitalDivElement from './OrbitalDivElement';
+import { getLunarPhase, type LunarPhase } from '@utils/lunar-phase';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -87,7 +87,7 @@ zIndexSlot?: number;
 
 /**
 
-- Shadow color. Default: ‘#000000’
+- Shadow color. Default: '#000000'
 - Can be used to tint the shadow for atmospheric effect.
   */
   shadowColor?: string;
@@ -158,7 +158,7 @@ shadowPath = [
 `M ${cx} ${cy - r}`,
 `A ${r} ${r} 0 0 0 ${cx} ${cy + r}`,        // left semicircle arc
 `A ${rx} ${ry} 0 0 ${terminatorSweep} ${cx} ${cy - r}`, // terminator arc back
-].join(’ ‘);
+].join(' ');
 } else {
 // Shadow on right half
 const terminatorSweep = terminatorScale <= 0 ? 1 : 0;
@@ -166,7 +166,7 @@ shadowPath = [
 `M ${cx} ${cy - r}`,
 `A ${r} ${r} 0 0 1 ${cx} ${cy + r}`,        // right semicircle arc
 `A ${rx} ${ry} 0 0 ${terminatorSweep} ${cx} ${cy - r}`, // terminator arc back
-].join(’ ’);
+].join(' ');
 }
 
 // Hide overlay entirely at full moon (no shadow)
@@ -174,14 +174,14 @@ const overlayOpacity = phase.normalized > 0.48 && phase.normalized < 0.52
 ? 0
 : shadowOpacity;
 
-const overlayStyle: React.CSSProperties = {
-position: ‘absolute’,
+const overlayStyle = {
+position: 'absolute',
 top: 0,
-left: ‘50%’,
+left: '50%',
 transform: `translateX(-50%) ${rotation.replace('rotate(', 'rotate(-')}`,
 width: size,
 height: size,
-pointerEvents: ‘none’,
+pointerEvents: 'none',
 // Counter-rotate the overlay to stay upright with the image
 };
 
@@ -191,8 +191,8 @@ return (
 width={size}
 height={size}
 viewBox={`0 0 ${size} ${size}`}
-xmlns=“http://www.w3.org/2000/svg”
-aria-hidden=“true”
+xmlns="http://www.w3.org/2000/svg"
+aria-hidden="true"
 >
 {/* Clip the shadow to the circular moon boundary */}
 <defs>
@@ -216,13 +216,13 @@ clipPath={`url(#moon-clip-${size})`}
 export default function OrbitalObjectPhase({
 id,
 src,
-alt = ‘’,
+alt = '',
 zIndexSlot = 0,
 imageSize = 48,
 shadowOpacity = 0.92,
-shadowColor = ‘#000000’,
-imageClassName = ‘’,
-className = ‘’,
+shadowColor = '#000000',
+imageClassName = '',
+className = '',
 }: OrbitalObjectPhaseProps) {
 const rotations = useStore($rotations);
 const geometry = useStore($geometry);
@@ -238,26 +238,26 @@ if (!rotation || !geo) return null;
 const zIndex = getTierZIndex(geo.tier, zIndexSlot);
 
 // Counter-rotate the image and overlay so both stay visually upright
-const counterRotation = rotation.cssRotation.replace(‘rotate(’, ‘rotate(-’);
+const counterRotation = rotation.cssRotation.replace('rotate(', 'rotate(-');
 
-const imageStyle: React.CSSProperties = {
+const imageStyle = {
 width: `${imageSize}px`,
 height: `${imageSize}px`,
-display: ‘block’,
+display: 'block',
 transform: counterRotation,
-pointerEvents: ‘none’,
-userSelect: ‘none’,
-position: ‘relative’,
+pointerEvents: 'none',
+userSelect: 'none',
+position: 'relative',
 };
 
 // Wrapper positions both the image and the phase overlay together
-const wrapperStyle: React.CSSProperties = {
-position: ‘relative’,
+const wrapperStyle = {
+position: 'relative',
 width: imageSize,
 height: imageSize,
-display: ‘flex’,
-alignItems: ‘center’,
-justifyContent: ‘center’,
+display: 'flex',
+alignItems: 'center',
+justifyContent: 'center',
 };
 
 return (

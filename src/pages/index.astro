@@ -19,9 +19,7 @@ const REVEAL_ENABLED: boolean = false;
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   </head>
-
   <body>
-
     <!-- Homepage sits behind everything, revealed as cells disappear -->
     <div class="underlayer">
       <!-- ═══════════════════════════════════════════════════
@@ -29,9 +27,7 @@ const REVEAL_ENABLED: boolean = false;
           ═══════════════════════════════════════════════════ -->
       <Homepage />
     </div>
-
     <Mondrian live={REVEAL_ENABLED}/>
-
     <script type="module" src="/src/utils/mondrian.ts"></script>
   </body>
 </html>
